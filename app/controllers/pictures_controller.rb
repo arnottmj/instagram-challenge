@@ -46,7 +46,7 @@ class PicturesController < ApplicationController
 
   def destroy
     @picture = Picture.find(params[:id])
-    
+  
     if @picture.user == current_user
       @picture.destroy
       flash[:notice] = 'Picture deleted successfully'
@@ -55,6 +55,7 @@ class PicturesController < ApplicationController
       flash[:notice] = 'You did not add that picture'
       redirect_to '/pictures'
     end
+
   end
 
   def picture_params

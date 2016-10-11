@@ -20,14 +20,18 @@ class LikesController < ApplicationController
 
   def destroy
     @like = Like.find(params[:id])
+
+    @like.destroy
+
+    redirect_to '/pictures'
     
-    if current_user.reviews.include?(@review)
-      @review.destroy
-      flash[:notice] = 'Review deleted successfully'
-      redirect_to '/restaurants'
-    else
-      flash[:notice] = 'You did not add that review'
-      redirect_to '/restaurants'
-    end
+    # if current_user.reviews.include?(@review)
+    #   @review.destroy
+    #   flash[:notice] = 'Review deleted successfully'
+    #   redirect_to '/restaurants'
+    # else
+    #   flash[:notice] = 'You did not add that review'
+    #   redirect_to '/restaurants'
+    # end
   end
 end
