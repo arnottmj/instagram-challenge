@@ -31,8 +31,12 @@ feature 'liking' do
     end
 
     scenario 'a visitor can only like a picture once' do
-      like_picture
-      expect(page).to have_content('You have already liked this picture')
+      expect(page).not_to have_link('like', exact: true)
+    end
+
+    scenario 'a visitor can unlike a picture' do
+      click_link('unlike')
+      expect(page).to have_link('like', exact: true)
     end
 
     def sign_up

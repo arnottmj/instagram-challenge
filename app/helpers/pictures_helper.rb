@@ -1,6 +1,6 @@
 module PicturesHelper
 
-  def validate_picture_ownership(picture)
+  def current_user_has_picture_ownership?(picture)
     if !user_signed_in?
       return false
     else
@@ -8,11 +8,19 @@ module PicturesHelper
     end
   end
 
+  def current_user_has_comment_ownership?(comment)
+    if !user_signed_in?
+      return false
+    else
+      current_user.id == comment.user.id
+    end
+  end
+
   def already_liked?(picture)
     if !user_signed_in?
       return false
     else
-      !picture.likes.find_by(user_id: current_user.id).nil?
+      !retrieve_user_picture_like(picture).nil?
     end
   end
 

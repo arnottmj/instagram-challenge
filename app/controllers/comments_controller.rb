@@ -21,7 +21,7 @@ class CommentsController < ApplicationController
   def destroy
     @comment = Comment.find(params[:id])
     
-    if current_user.comments.include?(@comment)
+    if current_user_made_comment?(@comment)
       @comment.destroy
       flash[:notice] = 'Comment deleted successfully'
       redirect_to '/pictures'
@@ -34,4 +34,15 @@ class CommentsController < ApplicationController
   def comment_params
     params.require(:comment).permit(:thoughts)
   end
+
+  private
+
+  def current_user_made_comment?(comment)
+    if !user_signed_in?
+      return false
+    else
+      current_user.comments.include?(comment)
+    end
+  end
+
 end

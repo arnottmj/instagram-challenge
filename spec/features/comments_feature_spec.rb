@@ -11,6 +11,17 @@ feature "comments" do
       click_link 'comment'
       expect(page).to have_content 'Log in'
     end
+
+    scenario 'a visitor cannot delete a comment' do
+      Picture.create(name:'test',
+                     avatar_file_name: 'test.jpg',
+                     avatar_file_size: '10',
+                     avatar_content_type: 'image/jpeg')
+      visit '/pictures'
+      # click_link 'comment'
+      # expect(page).to have_content 'Log in'
+      expect(page).not_to have_link('delete comment', exact: true)
+    end
   end
 
   context 'when logged in' do
@@ -32,10 +43,26 @@ feature "comments" do
       expect(page).to have_content 'Comment deleted successfully'
     end
 
+    scenario 'doesnt allow users to delete a comment if it doesnt belong to them' do
+      click_link('Sign out')
+      sign_up_2
+      expect(page).not_to have_link('delete comment', exact: true)
+
+    end
+
     def sign_up
       visit '/pictures'
       click_link 'Sign up'
       fill_in 'Email', with: 'test@makers.com'
+      fill_in 'Password', with: '12345678'
+      fill_in 'Password confirmation', with: '12345678'
+      click_button 'Sign up'
+    end
+
+    def sign_up_2
+      visit '/pictures'
+      click_link 'Sign up'
+      fill_in 'Email', with: 'test2@makers.com'
       fill_in 'Password', with: '12345678'
       fill_in 'Password confirmation', with: '12345678'
       click_button 'Sign up'
@@ -58,5 +85,3 @@ feature "comments" do
   end
 end
 
-# no test for 'doesnt allow a comment to be deleted if it does not belong to the user' as it requires a whole new user to sign in.
-# havent done the test for 'not able to delete a comment' when not logged in.

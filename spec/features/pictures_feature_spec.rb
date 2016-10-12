@@ -1,13 +1,6 @@
 require 'rails_helper'
 
 feature 'pictures' do
-  context 'no pictures have been added' do
-    scenario 'should display a prompt to add a restaurant' do
-      visit '/pictures'
-      expect(page).to have_link 'Add a picture'
-      expect(page).to have_content 'No pictures yet'
-    end
-  end
 
   context 'pictures have been added' do
     before do
@@ -41,10 +34,9 @@ feature 'pictures' do
 
   context 'when not logged in' do
 
-    scenario 'a visitor cannot add a picture' do
+    scenario 'should not display a prompt to add a picture' do
       visit '/pictures'
-      click_link 'Add a picture'
-      expect(page).to have_content 'Log in'
+      expect(page).not_to have_link('Add a picture', exact: true)
     end
 
     scenario 'a visitor cannot delete a picture' do
@@ -54,8 +46,7 @@ feature 'pictures' do
                      avatar_content_type: 'image/jpeg')
 
       visit '/pictures'
-      click_link 'delete'
-      expect(page).to have_content 'Log in'
+      expect(page).not_to have_link('delete', exact: true)
     end
 
     scenario 'a visitor cannot edit a picture' do
@@ -65,8 +56,7 @@ feature 'pictures' do
                      avatar_content_type: 'image/jpeg')
 
       visit '/pictures'
-      click_link 'edit'
-      expect(page).to have_content 'Log in'
+      expect(page).not_to have_link('edit', exact: true)
     end
   end
 
@@ -74,6 +64,13 @@ feature 'pictures' do
 
     before do
       sign_up
+    end
+
+    context 'no pictures have been added' do
+      scenario 'should display a prompt to add a picture' do
+        visit '/pictures'
+        expect(page).to have_link 'Add a picture'
+      end
     end
 
     context 'uploading pictures' do
@@ -113,13 +110,10 @@ feature 'pictures' do
       end
 
       scenario 'stops a user editing other peoples pictures' do
-        Picture.create(name:'another test',
-                       avatar_file_name: 'test.jpg',
-                       avatar_file_size: '10',
-                       avatar_content_type: 'image/jpeg')
-        visit '/pictures'
-        click_link 'edit'
-        expect(page).to have_content 'You did not add that picture'
+        new_picture
+        click_link 'Sign out'
+        sign_up_2
+        expect(page).not_to have_link('edit', exact: true)
       end
     end
 
@@ -134,13 +128,10 @@ feature 'pictures' do
       end
 
       scenario 'stops a user deleting other peoples pictures' do
-        Picture.create(name:'another test',
-                       avatar_file_name: 'test.jpg',
-                       avatar_file_size: '10',
-                       avatar_content_type: 'image/jpeg')
-        visit '/pictures'
-        click_link 'delete'
-        expect(page).to have_content 'You did not add that picture'
+        new_picture
+        click_link 'Sign out'
+        sign_up_2
+        expect(page).not_to have_link('delete', exact: true)
       end
     end
 
@@ -148,6 +139,15 @@ feature 'pictures' do
       visit '/pictures'
       click_link 'Sign up'
       fill_in 'Email', with: 'test@makers.com'
+      fill_in 'Password', with: '12345678'
+      fill_in 'Password confirmation', with: '12345678'
+      click_button 'Sign up'
+    end
+
+    def sign_up_2
+      visit '/pictures'
+      click_link 'Sign up'
+      fill_in 'Email', with: 'test2@makers.com'
       fill_in 'Password', with: '12345678'
       fill_in 'Password confirmation', with: '12345678'
       click_button 'Sign up'

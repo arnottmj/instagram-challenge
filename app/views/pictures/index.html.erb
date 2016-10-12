@@ -1,11 +1,15 @@
+<% if user_signed_in? %>
+  <a href='/pictures/new'>Add a picture</a>
+<% end %>
+
 <% if @pictures.any? %>
   <% @pictures.each do |picture| %>
     <h2><%= picture.name %></h2> 
     Likes: <%= picture.likes.count %><br><br>
     <%= link_to "view", picture_path(picture) %>
-    <% if validate_picture_ownership(picture) %>
+    <% if current_user_has_picture_ownership?(picture) %>
       <%= link_to "delete", picture_path(picture), method: :delete %>
-      <%= link_to "edit", edit_picture_path(picture) %>
+      <%= link_to "edit title", edit_picture_path(picture) %>
     <% end %>
     <% if already_liked?(picture) %>
       <%= link_to "unlike", picture_like_path(picture, retrieve_user_picture_like(picture)), method: :delete %>
@@ -21,7 +25,9 @@
         <% picture.comments.each do |comment| %>
           <li>
             <%= "#{comment.thoughts} (#{comment.user.email})" %>
-            <%= link_to "delete comment", "/pictures/#{picture.id}/comments/#{comment.id}" , method: :delete %>
+            <% if current_user_has_comment_ownership?(comment) %>
+            <%= link_to "delete comment", picture_comment_path(picture, comment), method: :delete %>
+            <% end %>
           </li>
         <% end %>
       </ul>
@@ -32,4 +38,3 @@
 <% else %>
   No pictures yet
 <% end %>
-<a href='/pictures/new'>Add a picture</a>

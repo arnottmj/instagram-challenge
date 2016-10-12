@@ -12,6 +12,6 @@
 
 <%= form_for [@picture, @comment] do |f| %>
   <%= f.label :thoughts %>
-  <%= f.text_area :thoughts %>
+  <%= f.text_field :thoughts %>
   <%= f.submit 'Post comment' %>
 <% end %>

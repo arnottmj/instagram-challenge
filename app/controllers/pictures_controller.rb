@@ -40,6 +40,7 @@ class PicturesController < ApplicationController
     if @picture.errors.any?
       render 'edit'
     else
+      flash[:notice] = 'The picture has been successfully updated'
       redirect_to '/pictures'
     end
   end
